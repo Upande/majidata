@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load compress %}
+{%block title%}Data |{%endblock%}
+{%block sytles%}
+	<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+	{% compress css %}
+	<link rel="stylesheet" type="text/css" href="/static/js/dt/css/jquery.dataTables_themeroller.css" />
+	<link rel="stylesheet" type="text/css" href="/static/js/tt/media/css/TableTools_JUI.css" />
+	<style>
+		#data-div {
+			font-size:12px;
+		}
+		#table-data{
+			display:none;
+		}
+		table.dataTable {
+			overflow-y: scroll;
+		}
+		th,td{
+			width:200px;
+		}
+		#loading{
+			
+		}
+	</style>
+	{% endcompress %}
+{%endblock%}
+{%block content%}
+<div class="wrap selfclear">
+	<form id="selectors">
+	{% csrf_token %}
+		<select id="geographic_level" name="geographic_level" onChange="getTableNames();">
+			<option value="" selected> Select a Geographic Level</option>
+			<option value="county">County</option>
+			<option value="town">Town</option>
+			<option value="slum">Slum</option>
+			<option value="area">Area</option>
+			<option value="wsp">WSP</option>
+		</select>
+		<select id="category" name="category" onChange="getTableNames();">
+			<option value="" selected> Select a Category</option>
+			<option value="general_information">General Information</option>
+			<option value="popuplation_and_housing">Population and Housing</option>
+			<option value="water_supply">Water Supply</option>
+			<option value="sanitation_and_public_health">Sanitation and Public Health</option>
+			<option value="summary_sheet">Summary Sheet</option>
+		</select>
+		<select id="table" name="table" style="max-width:50%;" onChange="getTables();">
+			<option value="" selected>---</option>
+		</select>
+	</form>    
+	<div id="loading"><h3> Please Wait... </h3></div>
+	<div id="data-div" style="min-height:400px;">
+	{% autoescape off %}
+	{{html_}}
+	{% endautoescape %}
+	</div>
+</div>
+{%endblock%}
+{%block javascript%}
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script type="text/javascript" language="javascript" src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+	{% compress js %}
+	<script type="text/javascript" language="javascript" src="/static/js/dt/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" language="javascript" src="/static/js/tt/media/js/ZeroClipboard.js"></script>
+	<script type="text/javascript" language="javascript" src="/static/js/tt/media/js/TableTools.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+          function getTables(){
+		  if ($('#geographic_level').val() != "" && $('#category').val() != "" && $('#table').val() != ""){
+		      $.ajax({
+					url: "/data/tables/"+$('#geographic_level').val()+"/"+$('#category').val()+"/"+$('#table').val(),
+					}).done(function(e) {
+					$('#data-div').empty();
+					$('#data-div').html(e);
+					makeTable();
+					});
+				}else{
+				return false;
+				}				
+			}
+          function getTableNames(){
+		  if ($('#geographic_level').val() != "" && $('#category').val() != "" ){
+				  $.ajax({
+						url: "/data/tablenames/"+$('#geographic_level').val()+"/"+$('#category').val(),
+						}).done(function(e) {
+						var $subType = $("#table");
+						$subType.empty();
+						$subType.append($('<option value="" selected> Select a Table</option>'));
+						$subType.append($(e));
+						//$('#data-div').html(e);
+						});
+				}else{
+					var $subType = $("#table");
+					$subType.empty();
+					$subType.append($('<option value="" selected>---</option>'));
+					return false;
+				}
+			}
+		
+		  function makeTable(){  
+			$('#table-data').dataTable({
+				"bJQueryUI": true,				
+        		"sPaginationType": "full_numbers",
+				//"sDom": 'T<"clear">lfrtip',
+				"sDom": '<"H"Tlfr>rt<"F"ip>',
+						"oTableTools": {
+							"sSwfPath": "/static/js/tt/media/swf/copy_cvs_xls_pdf.swf"
+						}
+				
+    		});
+    		$('#table-data').css("display","block").fadeIn();
+			}
+		  
+		  $(document).ready(function() {
+			  $('#loading')
+				.hide()  // hide it initially
+				.ajaxStart(function() {
+					$(this).show();
+				})
+				.ajaxStop(function() {
+					$(this).hide();
+				});
+		
+		});
+	</script>
+	{% endcompress %}
+{%endblock%}

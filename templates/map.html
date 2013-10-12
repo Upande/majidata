@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load i18n %}{% load compress %}
+{%block title%}Visualize |{%endblock%}
+{%block sytles%}
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/extjs/3.4.1-1/resources/css/ext-all.css"/>
+	<link rel="stylesheet" type="text/css" title="blue" href="http://cdnjs.cloudflare.com/ajax/libs/extjs/3.4.1-1/resources/css/xtheme-blue.css"/>
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/theme/default/style.css"/>
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/geoext/1.1/resources/css/geoext-all.css"/>
+	{% compress css %}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/lib/heron/0.75/ux/gxp/git/src/theme/all.css"/>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/lib/heron/0.75/resources/css/default.css"/>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}js/lib/heron/0.75/resources/css/default-theme-blue.css"/>	
+	<style>
+		ul.x-tab-strip {
+			margin: 0;
+			list-style: none;
+			list-style-type:none;
+		}
+	</style>
+	{% endcompress %}
+{%endblock%}
+{%block content%}
+<div style="width:100%; height:500px;" id="map">
+<!--map will be displayed here -->
+</div>
+<div id="render" class="x-hide-display"></div>
+<iframe src="/data/" id="majitables" style="width:100%; height:500px;" class="x-hide-display" ></iframe> 
+{%endblock%}
+{%block javascript%}
+	<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/extjs/3.4.1-1/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/extjs/3.4.1-1/ext-all.js"></script>
+   	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.js"></script>
+   	<!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>-->
+	<script type="text/javascript" src="http://openlayers.org/api/2.13.1/OpenLayers.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/lib/geoext/1.1/lib/GeoExt.js"></script>
+    {% compress js %}
+	<script type="text/javascript">
+		var colabels = [];
+		Ext.Ajax.request({
+			url: '/cols/',
+			success: function (result, request) {
+				var jsonData = Ext.util.JSON.decode(result.responseText);
+				colabels = jsonData;
+			},
+			failure: function (result, request) {
+			//failure 
+			}
+		})
+	</script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/lib/heron/0.75/ux/gxp/gxp.js"></script>
+	{% endcompress %}
+	<script type="text/javascript" src="{{STATIC_URL}}js/lib/heron/0.75/lib/DynLoader.js"></script>	
+    {% compress js %}	
+	<!--<script type="text/javascript" src="{{STATIC_URL}}js/lib/heron/0.75/script/Heron.js"></script>-->	
+	<script type="text/javascript">
+        Heron.globals.imagePath = '{{STATIC_URL}}js/lib/heron/0.75/resources/images/';
+		var mapH;
+		if (document.body && document.body.offsetWidth) {
+			var winH = document.body.offsetHeight;
+				if (winH > 500){					
+					mapH = winH - (0.2 * winH);
+				}else{
+					mapH = 500;
+				}
+			}
+    </script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/map-js/map_functions.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/map-js/map.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}js/map-js/map_layout.js"></script>
+	{% endcompress %}
+{%endblock%}

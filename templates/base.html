@@ -1,0 +1,83 @@
+{% load i18n %}{% load compress %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <title>{%block title%}{%endblock%} MajiData</title>
+  <!-- CSS -->
+  {% compress css %}
+  <link rel="stylesheet" type="text/css" href="/static/css/boilerplate-min.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="/static/css/site.css" media="screen" />
+  {% endcompress %}
+  	<style>
+	p,a,.onecol{
+		font-size:14px;
+	}
+	</style>
+  {%block sytles%}
+  
+  {%endblock%}
+   
+</head>
+
+<body>
+  <div id="header">
+    <div class="wrap selfclear">
+      <a id="logo" href="" name="logo">MajiData</a>
+    </div>
+  </div>
+
+  <div id="crossbar">
+    <div class="wrap selfclear">
+      <ul id="sitenav" class="selfclear">
+        <li><a href="/">Home</a></li>
+        <!--<li><a href="/data">Maji Data</a></li>-->
+        <li><a href="/visualize">Explore Data</a></li>
+        <li style="float:right;"><a href="http://www.majidata.go.ke" target="_blank">MajiData Website</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="main">    
+        {%block content%} {%endblock%}
+  </div>
+
+  <div id="footer">
+    <div class="wrap selfclear">
+      <div class="onecol">
+        Powered by <a href="http://www.upande.com">Upande</a>
+      </div>
+    </div>
+  </div>
+  <!-- JS -->
+  {%block javascript%}
+  {%endblock%}
+  {% compress js %}
+  <!-- Quantcast Tag -->
+	<script type="text/javascript">
+	var _qevents = _qevents || [];
+
+	(function() {
+	var elem = document.createElement('script');
+	elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";
+	elem.async = true;
+	elem.type = "text/javascript";
+	var scpt = document.getElementsByTagName('script')[0];
+	scpt.parentNode.insertBefore(elem, scpt);
+	})();
+
+	_qevents.push({
+	qacct:"p-Rp_0z8AeFvkFc"
+	});
+	</script>
+
+	<noscript>
+	<div style="display:none;">
+	<img src="//pixel.quantserve.com/pixel/p-Rp_0z8AeFvkFc.gif" border="0" height="1" width="1" alt="Quantcast"/>
+	</div>
+	</noscript>
+	<!-- End Quantcast tag -->
+	{% endcompress %}
+</body>
+</html>
